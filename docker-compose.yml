@@ -13,8 +13,8 @@ services:
     environment:
       - JAVA_OPTS=-Xmx2048m
       - CASC_JENKINS_CONFIG=/var/jenkins_home/casc.yaml
-    # volumes:
-    #   - jenkins-master:/var/jenkins_home
+    volumes:
+      - jenkins-master:/var/jenkins_home
     links:
       - "worker:jenkins-slave"
     secrets:
@@ -27,18 +27,18 @@ services:
     image: worker
     networks:
       - jenkins-nw    
-    # volumes:
-    #   - jenkins-worker:/var/jenkins_home/worker
+    volumes:
+      - jenkins-worker:/var/jenkins_home/worker
 
   gerrit:
     image: gerritcodereview/gerrit
-    # volumes:
-    #    - git-volume:/var/gerrit/git
-    #    - index-volume:/var/gerrit/index
-    #    - cache-volume:/var/gerrit/cache
+    volumes:
+      - git-volume:/var/gerrit/git
+      - index-volume:/var/gerrit/index
+      - cache-volume:/var/gerrit/cache
     ports:
-       - "29418:29418"
-       - "8082:8080"
+      - "29418:29418"
+      - "8082:8080"
     networks:
       - gerrit-nw
     environment:
