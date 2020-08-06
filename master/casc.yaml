@@ -1,0 +1,70 @@
+jenkins:
+  agentProtocols:
+  - "JNLP4-connect"
+  - "Ping"
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+  disableRememberMe: false
+  labelAtoms:
+  - name: "js"
+  - name: "master"
+  markupFormatter: "plainText"
+  mode: NORMAL
+
+  nodes:
+  - permanent:
+      labelString: "js"
+      launcher:
+        ssh:
+          credentialsId: "js"
+          host: "worker"
+          port: 22
+          sshHostKeyVerificationStrategy: "nonVerifyingKeyVerificationStrategy"
+      name: "js"
+      numExecutors: 1
+      remoteFS: "/home/jenkins"
+      retentionStrategy: "always"
+  numExecutors: 2
+  remotingSecurity:
+    enabled: true
+  scmCheckoutRetryCount: 0
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+  slaveAgentPort: 50000
+  updateCenter:
+    sites:
+    - id: "default"
+      url: "https://updates.jenkins.io/update-center.json"
+security:
+  apiToken:
+    creationOfLegacyTokenEnabled: false
+    tokenGenerationOnCreationEnabled: false
+    usageStatisticsEnabled: true
+  copyartifact:
+    mode: PRODUCTION
+  sSHD:
+    port: -1
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - basicSSHUserPrivateKey:
+              scope: SYSTEM
+              id: js
+              username: jenkins
+              passphrase: ""
+              description: "SSH passphrase with private key file. Private key provided"
+              privateKeySource:
+                directEntry:
+                  privateKey: ${id_rsa}

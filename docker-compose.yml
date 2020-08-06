@@ -1,0 +1,62 @@
+version: "3.3"
+services:
+  master:
+    build:
+      context: .
+      dockerfile: master/Dockerfile    
+    image: master
+    ports:
+      - "8081:8080"
+    networks:
+      - jenkins-nw
+      - gerrit-nw
+    environment:
+      - JAVA_OPTS=-Xmx2048m
+      - CASC_JENKINS_CONFIG=/var/jenkins_home/casc.yaml
+    # volumes:
+    #   - jenkins-master:/var/jenkins_home
+    links:
+      - "worker:jenkins-slave"
+    secrets:
+      - id_rsa
+
+  worker:
+    build:
+      context: .
+      dockerfile: slave/Dockerfile    
+    image: worker
+    networks:
+      - jenkins-nw    
+    # volumes:
+    #   - jenkins-worker:/var/jenkins_home/worker
+
+  gerrit:
+    image: gerritcodereview/gerrit
+    # volumes:
+    #    - git-volume:/var/gerrit/git
+    #    - index-volume:/var/gerrit/index
+    #    - cache-volume:/var/gerrit/cache
+    ports:
+       - "29418:29418"
+       - "8082:8080"
+    networks:
+      - gerrit-nw
+    environment:
+      - CANONICAL_WEB_URL=http://localhost:8082      
+
+volumes:
+  jenkins-master:
+  jenkins-worker:
+  git-volume:
+  index-volume:
+  cache-volume:
+
+networks:
+  jenkins-nw:
+    driver: bridge
+  gerrit-nw:
+    driver: bridge
+
+secrets:
+  id_rsa:
+    file: ssh_keys/id_rsa
